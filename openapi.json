@@ -1,0 +1,6958 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OpenAsy CRM",
+    "version": "0.1.0",
+    "description": "Companies, contacts and deals through the pipelines crm.yaml sets, with activities, tasks, quotes as PDF and meeting links. Viewers read everything; editors change what they own; admins change everything.",
+    "license": {
+      "name": "AGPL-3.0-only",
+      "identifier": "AGPL-3.0-only"
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "security": [
+    {
+      "session": []
+    },
+    {
+      "apiToken": []
+    },
+    {
+      "adminToken": []
+    }
+  ],
+  "paths": {
+    "/api/v1/version": {
+      "get": {
+        "operationId": "version",
+        "tags": [
+          "Product"
+        ],
+        "summary": "Product and version",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Version"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/products": {
+      "get": {
+        "operationId": "products",
+        "tags": [
+          "Product"
+        ],
+        "summary": "The install's other products",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      }
+    },
+    "/api/v1/summary": {
+      "get": {
+        "operationId": "summary",
+        "tags": [
+          "Product"
+        ],
+        "summary": "The caller's tasks due and stale deals",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Summary"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      }
+    },
+    "/api/v1/settings": {
+      "get": {
+        "operationId": "settings",
+        "tags": [
+          "Product"
+        ],
+        "summary": "The settings file as applied",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Settings"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      }
+    },
+    "/api/v1/team": {
+      "get": {
+        "operationId": "team",
+        "tags": [
+          "Product"
+        ],
+        "summary": "Members, who may own records",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Team"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      }
+    },
+    "/api/v1/integrations": {
+      "get": {
+        "operationId": "integrations",
+        "tags": [
+          "Product"
+        ],
+        "summary": "Audience, Messages and mail, and whether they answer",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Integrations"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      }
+    },
+    "/api/v1/report": {
+      "get": {
+        "operationId": "report",
+        "tags": [
+          "Reports"
+        ],
+        "summary": "Pipeline, forecast, won and lost, reasons, time in stage, by owner",
+        "description": "The forecast counts a won deal at its value in the month it was won, and an open deal at its value times its stage's probability in the month it is expected to close (this month when that date has passed).\n\nNeeds the viewer role.",
+        "parameters": [
+          {
+            "name": "pipeline",
+            "in": "query",
+            "required": false,
+            "description": "A pipeline id; the file's first by default.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "description": "me, or a member's id; everyone's by default.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer"
+      }
+    },
+    "/api/v1/companies": {
+      "get": {
+        "operationId": "listCompanies",
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Companies",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Part of a name, email, city or sector.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      },
+      "post": {
+        "operationId": "createCompany",
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Add a company",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Added; the caller owns it unless owner says otherwise.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/companies/{id}": {
+      "get": {
+        "operationId": "getCompany",
+        "tags": [
+          "Companies"
+        ],
+        "summary": "A company with its contacts, deals and activities",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The company's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompanyDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      },
+      "patch": {
+        "operationId": "updateCompany",
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Change a company",
+        "description": "Editors change only what they own, or what nobody owns.\n\nNeeds the editor role.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The company's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanyInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Company"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      },
+      "delete": {
+        "operationId": "deleteCompany",
+        "tags": [
+          "Companies"
+        ],
+        "summary": "Delete a company",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The company's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/contacts": {
+      "get": {
+        "operationId": "listContacts",
+        "tags": [
+          "Contacts"
+        ],
+        "summary": "Contacts",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Part of a name, email, city or sector.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "company",
+            "in": "query",
+            "required": false,
+            "description": "Only this company's (contacts).",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      },
+      "post": {
+        "operationId": "createContact",
+        "tags": [
+          "Contacts"
+        ],
+        "summary": "Add a contact",
+        "description": "An email belongs to one contact only. A new contact is sent to Audience as contact_created when it is linked.\n\nNeeds the editor role.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contact"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      }
+    },
+    "/api/v1/contacts/{id}": {
+      "get": {
+        "operationId": "getContact",
+        "tags": [
+          "Contacts"
+        ],
+        "summary": "A contact with their deals, activities and tasks",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The contact's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContactDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      },
+      "patch": {
+        "operationId": "updateContact",
+        "tags": [
+          "Contacts"
+        ],
+        "summary": "Change a contact",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The contact's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContactInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contact"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      },
+      "delete": {
+        "operationId": "deleteContact",
+        "tags": [
+          "Contacts"
+        ],
+        "summary": "Delete a contact",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The contact's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/deals": {
+      "get": {
+        "operationId": "listDeals",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "Deals",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "open (default), won, lost or all.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pipeline",
+            "in": "query",
+            "required": false,
+            "description": "A pipeline id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "description": "me, none or a member's id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Part of the deal's, company's or contact's name.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DealList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      },
+      "post": {
+        "operationId": "createDeal",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "Open a deal",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DealInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deal"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/deals/{id}": {
+      "get": {
+        "operationId": "getDeal",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "A deal with its history, activities, tasks and quotes",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DealDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      },
+      "patch": {
+        "operationId": "updateDeal",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "Change a deal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  },
+                  "company": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "companyName": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "contact": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "owner": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "expectedClose": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date",
+                        "examples": [
+                          "2026-11-28"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deal"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      },
+      "delete": {
+        "operationId": "deleteDeal",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "Delete a deal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/deals/{id}/move": {
+      "post": {
+        "operationId": "moveDeal",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "Move an open deal to another stage",
+        "description": "Sent to Audience as deal_stage_changed.\n\nNeeds the editor role.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "stage"
+                ],
+                "properties": {
+                  "stage": {
+                    "type": "string"
+                  },
+                  "pipeline": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deal"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      }
+    },
+    "/api/v1/deals/{id}/won": {
+      "post": {
+        "operationId": "winDeal",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "Mark a deal won",
+        "description": "reason, when the pipeline has won_reasons, is one of them. Sent to Audience as deal_won and to Messages.\n\nNeeds the editor role.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                  "reason": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deal"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      }
+    },
+    "/api/v1/deals/{id}/lost": {
+      "post": {
+        "operationId": "loseDeal",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "Mark a deal lost, with the reason",
+        "description": "reason is one of the pipeline's lost_reasons. Sent to Audience as deal_lost and to Messages.\n\nNeeds the editor role.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "reason"
+                ],
+                "properties": {
+                  "reason": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deal"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      }
+    },
+    "/api/v1/deals/{id}/reopen": {
+      "post": {
+        "operationId": "reopenDeal",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "Reopen a won or lost deal",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                  "stage": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deal"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/deals/{id}/quotes": {
+      "post": {
+        "operationId": "createQuote",
+        "tags": [
+          "Quotes"
+        ],
+        "summary": "Make a quote for a deal",
+        "description": "Without lines, it starts from the deal's last quote, or one line with the deal's name and value. KDV is the file's quotes.vat.\n\nNeeds the editor role.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                  "lines": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "item",
+                        "unitPrice"
+                      ],
+                      "properties": {
+                        "item": {
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "type": "number"
+                        },
+                        "unitPrice": {
+                          "type": "number"
+                        },
+                        "discount": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  },
+                  "notes": {
+                    "type": "string"
+                  },
+                  "validUntil": {
+                    "type": "string",
+                    "format": "date",
+                    "examples": [
+                      "2026-11-28"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quote"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      }
+    },
+    "/api/v1/deals/{id}/sequences": {
+      "post": {
+        "operationId": "startSequence",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "Start a sales sequence in Messages for the deal's contact",
+        "description": "Posts the sequence's event to Messages' POST /api/v1/events, which starts the journey it triggers.\n\nNeeds the editor role.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "sequence"
+                ],
+                "properties": {
+                  "sequence": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Queued for Messages.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SequenceStarted"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      }
+    },
+    "/api/v1/deals/{id}/audience": {
+      "get": {
+        "operationId": "dealAudience",
+        "tags": [
+          "Deals"
+        ],
+        "summary": "What the deal's contact did, from Audience",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AudienceProfile"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      }
+    },
+    "/api/v1/activities": {
+      "get": {
+        "operationId": "listActivities",
+        "tags": [
+          "Activities"
+        ],
+        "summary": "Activities",
+        "parameters": [
+          {
+            "name": "deal",
+            "in": "query",
+            "required": false,
+            "description": "A deal's id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "contact",
+            "in": "query",
+            "required": false,
+            "description": "A contact's id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "company",
+            "in": "query",
+            "required": false,
+            "description": "A company's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      },
+      "post": {
+        "operationId": "logActivity",
+        "tags": [
+          "Activities"
+        ],
+        "summary": "Log a call, meeting, email or note",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "kind",
+                  "text"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "call",
+                      "meeting",
+                      "email",
+                      "note"
+                    ]
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "deal": {
+                    "type": "string"
+                  },
+                  "contact": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "type": "string"
+                  },
+                  "at": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Activity"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/activities/{id}": {
+      "delete": {
+        "operationId": "deleteActivity",
+        "tags": [
+          "Activities"
+        ],
+        "summary": "Remove a logged activity",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The activity's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Removed."
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/tasks": {
+      "get": {
+        "operationId": "listTasks",
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Tasks",
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "query",
+            "required": false,
+            "description": "me (default), all or a member's id.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "open (default), done or all.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      },
+      "post": {
+        "operationId": "createTask",
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Add a task",
+        "description": "Its reminder goes by email the morning it is due, at the file's tasks.remind_at, unless remind is false.\n\nNeeds the editor role.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "text",
+                  "due"
+                ],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "due": {
+                    "type": "string",
+                    "format": "date",
+                    "examples": [
+                      "2026-11-28"
+                    ]
+                  },
+                  "time": {
+                    "type": "string"
+                  },
+                  "deal": {
+                    "type": "string"
+                  },
+                  "contact": {
+                    "type": "string"
+                  },
+                  "owner": {
+                    "type": "string"
+                  },
+                  "remind": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      }
+    },
+    "/api/v1/tasks/{id}": {
+      "patch": {
+        "operationId": "updateTask",
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Change or complete a task",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The task's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "due": {
+                    "type": "string",
+                    "format": "date",
+                    "examples": [
+                      "2026-11-28"
+                    ]
+                  },
+                  "time": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "owner": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "done": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      },
+      "delete": {
+        "operationId": "deleteTask",
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Delete a task",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The task's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/quotes/{id}": {
+      "get": {
+        "operationId": "getQuote",
+        "tags": [
+          "Quotes"
+        ],
+        "summary": "A quote",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The quote's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quote"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      },
+      "patch": {
+        "operationId": "updateQuote",
+        "tags": [
+          "Quotes"
+        ],
+        "summary": "Change a draft quote",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The quote's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                  "lines": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "item",
+                        "unitPrice"
+                      ],
+                      "properties": {
+                        "item": {
+                          "type": "string"
+                        },
+                        "quantity": {
+                          "type": "number"
+                        },
+                        "unitPrice": {
+                          "type": "number"
+                        },
+                        "discount": {
+                          "type": "number"
+                        }
+                      }
+                    }
+                  },
+                  "notes": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "validUntil": {
+                    "type": "string",
+                    "format": "date",
+                    "examples": [
+                      "2026-11-28"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quote"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      },
+      "delete": {
+        "operationId": "deleteQuote",
+        "tags": [
+          "Quotes"
+        ],
+        "summary": "Delete a draft quote",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The quote's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Deleted."
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/quotes/{id}/send": {
+      "post": {
+        "operationId": "sendQuote",
+        "tags": [
+          "Quotes"
+        ],
+        "summary": "Send a quote, by email as PDF or marked sent",
+        "description": "A sent quote stays as it was sent. The deal's value becomes the quote's total without KDV.\n\nNeeds the editor role.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The quote's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [],
+                "properties": {
+                  "email": {
+                    "type": "boolean"
+                  },
+                  "to": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quote"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      }
+    },
+    "/api/v1/quotes/{id}/accept": {
+      "post": {
+        "operationId": "acceptQuote",
+        "tags": [
+          "Quotes"
+        ],
+        "summary": "The customer accepted: the deal is won at the quote's value",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The quote's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quote"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/quotes/{id}/decline": {
+      "post": {
+        "operationId": "declineQuote",
+        "tags": [
+          "Quotes"
+        ],
+        "summary": "The customer declined",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The quote's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Quote"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/quotes/{id}/pdf": {
+      "get": {
+        "operationId": "quotePdf",
+        "tags": [
+          "Quotes"
+        ],
+        "summary": "A quote as PDF",
+        "description": "Lines without KDV, then the subtotal, the KDV and the total with KDV, each on its own line.\n\nNeeds the viewer role.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The quote's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The PDF.",
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer"
+      }
+    },
+    "/api/v1/import": {
+      "post": {
+        "operationId": "importCsv",
+        "tags": [
+          "Import"
+        ],
+        "summary": "Import companies, contacts or deals from CSV",
+        "description": "Comma or semicolon separated, with a header line. Companies match by name or domain, contacts by email; deals are added (or skipped when external_id was imported before). dryRun checks every row and changes nothing.\n\nNeeds the editor role.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "kind",
+                  "csv"
+                ],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": [
+                      "companies",
+                      "contacts",
+                      "deals"
+                    ]
+                  },
+                  "csv": {
+                    "type": "string"
+                  },
+                  "dryRun": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResult"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "413": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      }
+    },
+    "/api/v1/meetings": {
+      "get": {
+        "operationId": "meetingLinks",
+        "tags": [
+          "Meetings"
+        ],
+        "summary": "The file's meeting links",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingLinkList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      }
+    },
+    "/api/v1/bookings": {
+      "get": {
+        "operationId": "listBookings",
+        "tags": [
+          "Meetings"
+        ],
+        "summary": "Bookings, from 30 days ago",
+        "parameters": [
+          {
+            "name": "link",
+            "in": "query",
+            "required": false,
+            "description": "A meeting link's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      }
+    },
+    "/api/v1/bookings/{id}/cancel": {
+      "post": {
+        "operationId": "cancelBooking",
+        "tags": [
+          "Meetings"
+        ],
+        "summary": "Cancel a booked meeting, in the calendar too",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The booking's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor",
+        "description": "Needs the editor role."
+      }
+    },
+    "/api/v1/calendar": {
+      "get": {
+        "operationId": "calendar",
+        "tags": [
+          "Meetings"
+        ],
+        "summary": "The caller's connected calendar",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CalendarState"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      },
+      "delete": {
+        "operationId": "disconnectCalendar",
+        "tags": [
+          "Meetings"
+        ],
+        "summary": "Disconnect the caller's calendar",
+        "responses": {
+          "204": {
+            "description": "Disconnected."
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      }
+    },
+    "/api/v1/calendar/connect": {
+      "post": {
+        "operationId": "connectCalendar",
+        "tags": [
+          "Meetings"
+        ],
+        "summary": "Start connecting Google Calendar or Microsoft 365",
+        "description": "Answers the provider's consent address; the browser goes there and comes back to /api/v1/calendar/callback.\n\nNeeds the viewer role.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "provider"
+                ],
+                "properties": {
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "google",
+                      "microsoft"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "url"
+                  ],
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer"
+      }
+    },
+    "/api/v1/calendar/callback": {
+      "get": {
+        "operationId": "calendarCallback",
+        "tags": [
+          "Meetings"
+        ],
+        "summary": "Where the provider sends the browser back",
+        "parameters": [
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "What the connect call began with.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "description": "The provider's code.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "To /meetings?calendar=connected, refused, expired or failed."
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer",
+        "description": "Needs the viewer role."
+      }
+    },
+    "/api/v1/public/meetings/{id}": {
+      "get": {
+        "operationId": "publicSlots",
+        "tags": [
+          "Booking"
+        ],
+        "summary": "A meeting link's free times",
+        "description": "Free times in the link's hours, from its owner's calendar, less held and confirmed bookings with their buffers. No sign-in; 60 calls a minute from one address.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The meeting link's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicSlots"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/public/meetings/{id}/bookings": {
+      "post": {
+        "operationId": "book",
+        "tags": [
+          "Booking"
+        ],
+        "summary": "Book a free time",
+        "description": "The calendar is read again; the time is held in one transaction so it is never booked twice, then the event is made with a Meet or Teams link and the contact and deal are found or made. 409 when the time is no longer free. No sign-in; 10 calls a minute from one address.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The meeting link's id.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingMade"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "409": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "429": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "502": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/v1/lookup": {
+      "get": {
+        "operationId": "lookup",
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "The customer by email, for Helpdesk",
+        "description": "Exactly the address, lowercased; no names or domains. 404 when no contact has it.\n\nNeeds the viewer role.",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrmLookup"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "404": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "viewer"
+      }
+    },
+    "/api/v1/leads": {
+      "post": {
+        "operationId": "openLead",
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Open a lead, from Live Chat, a form or your systems",
+        "description": "A deal in the file's leads.stage, its contact found by email or made. The member whose email owner names owns it, else leads.owner, else nobody. The transcript and pages go in the deal's first activity.\n\nNeeds the editor role.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The lead this external_id opened before.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeadCreated"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "A new lead.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LeadCreated"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "editor"
+      }
+    },
+    "/api/v1/erasures": {
+      "post": {
+        "operationId": "erase",
+        "tags": [
+          "Contracts"
+        ],
+        "summary": "Delete a person on request, as Audience asks",
+        "description": "Every contact with one of the emails or phone numbers goes, with their activities and tasks; deals with no company that were theirs go too, others keep the company's side. Bookings and queued events with the identifiers go. The same reference answers the same again.\n\nNeeds the admin role.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ErasureRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErasureAnswer"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "403": {
+            "$ref": "#/components/responses/Problem"
+          },
+          "422": {
+            "$ref": "#/components/responses/Problem"
+          }
+        },
+        "security": [
+          {
+            "session": []
+          },
+          {
+            "apiToken": []
+          },
+          {
+            "adminToken": []
+          }
+        ],
+        "x-openasy-role": "admin"
+      }
+    },
+    "/healthz": {
+      "get": {
+        "operationId": "healthz",
+        "tags": [
+          "Product"
+        ],
+        "summary": "Alive",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/readyz": {
+      "get": {
+        "operationId": "readyz",
+        "tags": [
+          "Product"
+        ],
+        "summary": "Ready",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Not ready.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    },
+    "/metrics": {
+      "get": {
+        "operationId": "metrics",
+        "tags": [
+          "Product"
+        ],
+        "summary": "Prometheus metrics",
+        "responses": {
+          "200": {
+            "description": "Metrics.",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "session": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "openasy_session"
+      },
+      "apiToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "An API token made under Settings, API tokens."
+      },
+      "adminToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Tests only."
+      }
+    },
+    "responses": {
+      "Problem": {
+        "description": "A problem (RFC 9457).",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Problem": {
+        "type": "object",
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "code": {
+            "type": "string",
+            "description": "Stable; match on this.",
+            "enum": [
+              "invalid-token",
+              "invalid-json",
+              "invalid-body",
+              "forbidden",
+              "not-found",
+              "conflict",
+              "not-linked",
+              "not-available",
+              "link-failed",
+              "rate-limited",
+              "payload-too-large",
+              "internal-error",
+              "unauthenticated",
+              "invalid-credentials",
+              "mfa-required",
+              "mfa-setup-required",
+              "cross-site"
+            ]
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      },
+      "Status": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "Version": {
+        "type": "object",
+        "required": [
+          "product",
+          "version"
+        ],
+        "properties": {
+          "product": {
+            "const": "crm"
+          },
+          "version": {
+            "type": "string"
+          }
+        }
+      },
+      "ProductList": {
+        "type": "object",
+        "required": [
+          "products"
+        ],
+        "properties": {
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "url"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Summary": {
+        "type": "object",
+        "required": [
+          "tasksDue",
+          "tasksOpen",
+          "stale",
+          "file"
+        ],
+        "properties": {
+          "tasksDue": {
+            "type": "integer"
+          },
+          "tasksOpen": {
+            "type": "integer"
+          },
+          "stale": {
+            "type": "integer"
+          },
+          "file": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "Settings": {
+        "type": "object",
+        "required": [
+          "file",
+          "yaml",
+          "config"
+        ],
+        "properties": {
+          "file": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "yaml": {
+            "type": "string"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "Team": {
+        "type": "object",
+        "required": [
+          "members"
+        ],
+        "properties": {
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "email"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Integrations": {
+        "type": "object",
+        "required": [
+          "audience",
+          "messages",
+          "mail"
+        ],
+        "properties": {
+          "audience": {
+            "type": "object"
+          },
+          "messages": {
+            "type": "object"
+          },
+          "mail": {
+            "type": "object"
+          }
+        }
+      },
+      "Report": {
+        "type": "object",
+        "required": [
+          "pipeline",
+          "currency",
+          "month",
+          "open",
+          "forecast",
+          "won",
+          "lost",
+          "winRate",
+          "stale",
+          "history",
+          "lostReasons",
+          "wonReasons",
+          "stages",
+          "owners"
+        ],
+        "properties": {
+          "pipeline": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "month": {
+            "type": "string"
+          },
+          "open": {
+            "type": "object",
+            "required": [
+              "count",
+              "value",
+              "noCloseDate"
+            ],
+            "properties": {
+              "count": {
+                "type": "integer"
+              },
+              "value": {
+                "type": "number"
+              },
+              "noCloseDate": {
+                "type": "integer"
+              }
+            }
+          },
+          "forecast": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "month",
+                "won",
+                "weighted",
+                "total",
+                "deals",
+                "overdue"
+              ],
+              "properties": {
+                "month": {
+                  "type": "string"
+                },
+                "won": {
+                  "type": "number"
+                },
+                "weighted": {
+                  "type": "number"
+                },
+                "total": {
+                  "type": "number"
+                },
+                "deals": {
+                  "type": "integer"
+                },
+                "overdue": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "won": {
+            "type": "object",
+            "required": [
+              "count",
+              "value",
+              "deals"
+            ],
+            "properties": {
+              "count": {
+                "type": "integer"
+              },
+              "value": {
+                "type": "number"
+              },
+              "deals": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "lost": {
+            "type": "object",
+            "required": [
+              "count",
+              "value",
+              "deals"
+            ],
+            "properties": {
+              "count": {
+                "type": "integer"
+              },
+              "value": {
+                "type": "number"
+              },
+              "deals": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "winRate": {
+            "type": "object",
+            "required": [
+              "days",
+              "won",
+              "lost",
+              "rate",
+              "before"
+            ],
+            "properties": {
+              "days": {
+                "type": "integer"
+              },
+              "won": {
+                "type": "integer"
+              },
+              "lost": {
+                "type": "integer"
+              },
+              "rate": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "before": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            }
+          },
+          "stale": {
+            "type": "integer"
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "month",
+                "won",
+                "lost",
+                "wonCount",
+                "lostCount"
+              ],
+              "properties": {
+                "month": {
+                  "type": "string"
+                },
+                "won": {
+                  "type": "number"
+                },
+                "lost": {
+                  "type": "number"
+                },
+                "wonCount": {
+                  "type": "integer"
+                },
+                "lostCount": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "lostReasons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "reason",
+                "count",
+                "value"
+              ],
+              "properties": {
+                "reason": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                },
+                "value": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "wonReasons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "reason",
+                "count",
+                "value"
+              ],
+              "properties": {
+                "reason": {
+                  "type": "string"
+                },
+                "count": {
+                  "type": "integer"
+                },
+                "value": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "probability",
+                "staleAfter",
+                "open",
+                "value",
+                "weighted",
+                "stale",
+                "avgDays",
+                "left"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "probability": {
+                  "type": "number"
+                },
+                "staleAfter": {
+                  "anyOf": [
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "open": {
+                  "type": "integer"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "weighted": {
+                  "type": "number"
+                },
+                "stale": {
+                  "type": "integer"
+                },
+                "avgDays": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "left": {
+                  "type": "integer"
+                }
+              }
+            }
+          },
+          "owners": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "owner",
+                "deals",
+                "value",
+                "weighted",
+                "forecast",
+                "stale",
+                "won"
+              ],
+              "properties": {
+                "owner": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "name"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "deals": {
+                  "type": "integer"
+                },
+                "value": {
+                  "type": "number"
+                },
+                "weighted": {
+                  "type": "number"
+                },
+                "forecast": {
+                  "type": "number"
+                },
+                "stale": {
+                  "type": "integer"
+                },
+                "won": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Company": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "domain",
+          "sector",
+          "city",
+          "plan",
+          "planRenews",
+          "users",
+          "owner",
+          "contacts",
+          "openDeals",
+          "openValue",
+          "createdAt",
+          "updatedAt",
+          "canEdit"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "planRenews": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date",
+                "examples": [
+                  "2026-11-28"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "users": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contacts": {
+            "type": "integer"
+          },
+          "openDeals": {
+            "type": "integer"
+          },
+          "openValue": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canEdit": {
+            "type": "boolean",
+            "description": "Whether the caller may change it: admins always, editors when they own it or nobody does."
+          }
+        }
+      },
+      "CompanyList": {
+        "type": "object",
+        "required": [
+          "companies"
+        ],
+        "properties": {
+          "companies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Company"
+            }
+          }
+        }
+      },
+      "CompanyDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Company"
+          },
+          {
+            "type": "object",
+            "required": [
+              "people",
+              "deals",
+              "activities"
+            ],
+            "properties": {
+              "people": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Contact"
+                }
+              },
+              "deals": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Deal"
+                }
+              },
+              "activities": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Activity"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CompanyInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "A plan id from the file."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "planRenews": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date",
+                "examples": [
+                  "2026-11-28"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "users": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "A member's id or email."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "Contact": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "title",
+          "company",
+          "owner",
+          "source",
+          "openDeals",
+          "createdAt",
+          "updatedAt",
+          "canEdit"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "openDeals": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canEdit": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ContactList": {
+        "type": "object",
+        "required": [
+          "contacts"
+        ],
+        "properties": {
+          "contacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Contact"
+            }
+          }
+        }
+      },
+      "ContactDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Contact"
+          },
+          {
+            "type": "object",
+            "required": [
+              "deals",
+              "activities",
+              "tasks"
+            ],
+            "properties": {
+              "deals": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Deal"
+                }
+              },
+              "activities": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Activity"
+                }
+              },
+              "tasks": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "ContactInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "companyName": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Found by name, or made."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "Deal": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "pipeline",
+          "stage",
+          "status",
+          "value",
+          "weighted",
+          "currency",
+          "company",
+          "contact",
+          "owner",
+          "expectedClose",
+          "forecastMonth",
+          "overdue",
+          "source",
+          "sourceName",
+          "sourceDetail",
+          "reason",
+          "reasonNote",
+          "closedAt",
+          "stageEnteredAt",
+          "lastActivityAt",
+          "quietDays",
+          "stale",
+          "staleAfter",
+          "createdAt",
+          "updatedAt",
+          "canEdit"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "pipeline": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "probability",
+              "inFile"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "probability": {
+                "type": "number",
+                "description": "The share of the value the forecast counts: the stage's while open, 100 won, 0 lost."
+              },
+              "inFile": {
+                "type": "boolean"
+              }
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "won",
+              "lost"
+            ]
+          },
+          "value": {
+            "type": "number",
+            "description": "In the currency, without KDV."
+          },
+          "weighted": {
+            "type": "number",
+            "description": "value times the stage's probability."
+          },
+          "currency": {
+            "type": "string"
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contact": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "email"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expectedClose": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date",
+                "examples": [
+                  "2026-11-28"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "forecastMonth": {
+            "anyOf": [
+              {
+                "type": "string",
+                "examples": [
+                  "2026-11"
+                ],
+                "description": "The month the forecast counts it in: when won, or its expected close (this month when that has passed); null for none."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "source": {
+            "type": "string"
+          },
+          "sourceName": {
+            "type": "string"
+          },
+          "sourceDetail": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reasonNote": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "closedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stageEnteredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastActivityAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "quietDays": {
+            "type": "integer"
+          },
+          "stale": {
+            "type": "boolean",
+            "description": "Open, and no activity for longer than its stage's stale_after."
+          },
+          "staleAfter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canEdit": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DealList": {
+        "type": "object",
+        "required": [
+          "deals"
+        ],
+        "properties": {
+          "deals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Deal"
+            }
+          }
+        }
+      },
+      "DealDetail": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Deal"
+          },
+          {
+            "type": "object",
+            "required": [
+              "companyDetail",
+              "contactDetail",
+              "history",
+              "timeInStage",
+              "activities",
+              "tasks",
+              "quotes",
+              "sequences",
+              "lostReasons",
+              "wonReasons"
+            ],
+            "properties": {
+              "companyDetail": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/Company"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "contactDetail": {
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/Contact"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "history": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "stage",
+                    "name",
+                    "enteredAt",
+                    "leftAt",
+                    "by"
+                  ],
+                  "properties": {
+                    "stage": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "enteredAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "leftAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "by": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                }
+              },
+              "timeInStage": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "stage",
+                    "days"
+                  ],
+                  "properties": {
+                    "stage": {
+                      "type": "string"
+                    },
+                    "days": {
+                      "type": "number"
+                    }
+                  }
+                }
+              },
+              "activities": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Activity"
+                }
+              },
+              "tasks": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              },
+              "quotes": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Quote"
+                }
+              },
+              "sequences": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "name"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "lostReasons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "wonReasons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "DealInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "pipeline": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number"
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "companyName": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contact": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expectedClose": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date",
+                "examples": [
+                  "2026-11-28"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "Activity": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "text",
+          "at",
+          "by",
+          "deal",
+          "contact",
+          "company",
+          "event",
+          "data"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "call",
+              "meeting",
+              "email",
+              "note",
+              "system"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "by": {
+            "type": "object",
+            "required": [
+              "id",
+              "name"
+            ],
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "deal": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contact": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "event": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "data": {
+            "anyOf": [
+              {
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "ActivityList": {
+        "type": "object",
+        "required": [
+          "activities"
+        ],
+        "properties": {
+          "activities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Activity"
+            }
+          }
+        }
+      },
+      "Task": {
+        "type": "object",
+        "required": [
+          "id",
+          "text",
+          "due",
+          "time",
+          "overdue",
+          "dueToday",
+          "deal",
+          "contact",
+          "owner",
+          "remindAt",
+          "remindedAt",
+          "doneAt",
+          "doneBy",
+          "createdAt",
+          "createdBy"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "due": {
+            "type": "string",
+            "format": "date",
+            "examples": [
+              "2026-11-28"
+            ]
+          },
+          "time": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "dueToday": {
+            "type": "boolean"
+          },
+          "deal": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "company"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "company": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contact": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "remindAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "remindedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "doneAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "doneBy": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string"
+          }
+        }
+      },
+      "TaskList": {
+        "type": "object",
+        "required": [
+          "tasks"
+        ],
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Task"
+            }
+          }
+        }
+      },
+      "Quote": {
+        "type": "object",
+        "required": [
+          "id",
+          "number",
+          "deal",
+          "state",
+          "currency",
+          "vat",
+          "validUntil",
+          "notes",
+          "lines",
+          "subtotal",
+          "vatAmount",
+          "total",
+          "createdAt",
+          "createdBy",
+          "sentAt",
+          "decidedAt",
+          "pdf"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "string",
+            "examples": [
+              "Q-2026-118"
+            ]
+          },
+          "deal": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "sent",
+              "accepted",
+              "declined"
+            ]
+          },
+          "currency": {
+            "type": "string"
+          },
+          "vat": {
+            "type": "number",
+            "description": "KDV, 0 to 100, as the file set it when the quote was made."
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date",
+            "examples": [
+              "2026-11-28"
+            ]
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "item",
+                "quantity",
+                "unitPrice",
+                "discount",
+                "total"
+              ],
+              "properties": {
+                "item": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "type": "number"
+                },
+                "unitPrice": {
+                  "type": "number"
+                },
+                "discount": {
+                  "type": "number"
+                },
+                "total": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "subtotal": {
+            "type": "number",
+            "description": "Without KDV."
+          },
+          "vatAmount": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number",
+            "description": "With KDV."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": "string"
+          },
+          "sentAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "decidedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pdf": {
+            "type": "string"
+          }
+        }
+      },
+      "ImportResult": {
+        "type": "object",
+        "required": [
+          "kind",
+          "rows",
+          "created",
+          "updated",
+          "skipped",
+          "errors",
+          "ignoredColumns",
+          "dryRun"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "companies",
+              "contacts",
+              "deals"
+            ]
+          },
+          "rows": {
+            "type": "integer"
+          },
+          "created": {
+            "type": "integer"
+          },
+          "updated": {
+            "type": "integer"
+          },
+          "skipped": {
+            "type": "integer"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "row",
+                "message"
+              ],
+              "properties": {
+                "row": {
+                  "type": "integer"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "ignoredColumns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dryRun": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MeetingLink": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "url",
+          "owner",
+          "minutes",
+          "hours",
+          "timeZone",
+          "bufferMinutes",
+          "noticeMinutes",
+          "daysAhead",
+          "pipeline",
+          "stage",
+          "online",
+          "calendar"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "email"
+            ],
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "name": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            }
+          },
+          "minutes": {
+            "type": "integer"
+          },
+          "hours": {
+            "type": "string"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "bufferMinutes": {
+            "type": "integer"
+          },
+          "noticeMinutes": {
+            "type": "integer"
+          },
+          "daysAhead": {
+            "type": "integer"
+          },
+          "pipeline": {
+            "type": "string"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "online": {
+            "type": "boolean"
+          },
+          "calendar": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "provider",
+                  "account",
+                  "error"
+                ],
+                "properties": {
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "google",
+                      "microsoft"
+                    ]
+                  },
+                  "account": {
+                    "type": "string"
+                  },
+                  "error": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "MeetingLinkList": {
+        "type": "object",
+        "required": [
+          "links"
+        ],
+        "properties": {
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MeetingLink"
+            }
+          }
+        }
+      },
+      "Booking": {
+        "type": "object",
+        "required": [
+          "id",
+          "link",
+          "start",
+          "end",
+          "state",
+          "name",
+          "email",
+          "company",
+          "note",
+          "contact",
+          "deal",
+          "made",
+          "joinUrl",
+          "error",
+          "createdAt"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          },
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "end": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "cancelled",
+              "failed"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contact": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "deal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "made": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "what",
+                  "stage"
+                ],
+                "properties": {
+                  "what": {
+                    "type": "string",
+                    "enum": [
+                      "created",
+                      "added"
+                    ]
+                  },
+                  "stage": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "joinUrl": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BookingList": {
+        "type": "object",
+        "required": [
+          "bookings"
+        ],
+        "properties": {
+          "bookings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Booking"
+            }
+          }
+        }
+      },
+      "CalendarState": {
+        "type": "object",
+        "required": [
+          "available",
+          "connected"
+        ],
+        "properties": {
+          "available": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "provider",
+                "ready"
+              ],
+              "properties": {
+                "provider": {
+                  "type": "string",
+                  "enum": [
+                    "google",
+                    "microsoft"
+                  ]
+                },
+                "ready": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "connected": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "provider",
+                  "account",
+                  "connectedAt",
+                  "okAt",
+                  "error"
+                ],
+                "properties": {
+                  "provider": {
+                    "type": "string",
+                    "enum": [
+                      "google",
+                      "microsoft"
+                    ]
+                  },
+                  "account": {
+                    "type": "string"
+                  },
+                  "connectedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
+                  "okAt": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "date-time"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "error": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "PublicSlots": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "owner",
+          "minutes",
+          "timeZone",
+          "slots"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "owner": {
+            "type": "string"
+          },
+          "minutes": {
+            "type": "integer"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "slots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "start",
+                "end"
+              ],
+              "properties": {
+                "start": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "end": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BookingRequest": {
+        "type": "object",
+        "required": [
+          "start",
+          "name",
+          "email"
+        ],
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "company": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "BookingMade": {
+        "type": "object",
+        "required": [
+          "booking",
+          "contact",
+          "deal",
+          "made"
+        ],
+        "properties": {
+          "booking": {
+            "type": "object",
+            "required": [
+              "id",
+              "start",
+              "end",
+              "joinUrl",
+              "owner",
+              "timeZone"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "start": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "end": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "joinUrl": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "owner": {
+                "type": "string"
+              },
+              "timeZone": {
+                "type": "string"
+              }
+            }
+          },
+          "contact": {
+            "type": "string"
+          },
+          "deal": {
+            "type": "string"
+          },
+          "made": {
+            "type": "string",
+            "enum": [
+              "created",
+              "added"
+            ],
+            "description": "created: a new deal in the link's stage; added: to the contact's open deal in that pipeline."
+          }
+        }
+      },
+      "AudienceProfile": {
+        "type": "object",
+        "required": [
+          "linked",
+          "found",
+          "url",
+          "profile"
+        ],
+        "properties": {
+          "linked": {
+            "type": "boolean"
+          },
+          "found": {
+            "type": "boolean"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "profile": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "pages",
+                  "recent",
+                  "traits"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "pages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "path",
+                        "views"
+                      ],
+                      "properties": {
+                        "path": {
+                          "type": "string"
+                        },
+                        "views": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  },
+                  "recent": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "at",
+                        "source",
+                        "type",
+                        "text"
+                      ],
+                      "properties": {
+                        "at": {
+                          "type": "string"
+                        },
+                        "source": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "text": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "traits": {
+                    "type": "object"
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "SequenceStarted": {
+        "type": "object",
+        "required": [
+          "sequence",
+          "event",
+          "queued"
+        ],
+        "properties": {
+          "sequence": {
+            "type": "string"
+          },
+          "event": {
+            "type": "string"
+          },
+          "queued": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CrmContact": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "title",
+          "company",
+          "plan",
+          "owner",
+          "url"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "name",
+                  "users"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "users": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "plan": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "id",
+                  "name",
+                  "renews"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "renews": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [
+                  "name",
+                  "email"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrmDeal": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "amount",
+          "currency",
+          "stage",
+          "status",
+          "url"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "amount": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stage": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "won",
+              "lost"
+            ]
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrmLookup": {
+        "type": "object",
+        "required": [
+          "contact"
+        ],
+        "properties": {
+          "contact": {
+            "$ref": "#/components/schemas/CrmContact"
+          },
+          "deals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrmDeal"
+            }
+          }
+        },
+        "description": "What Helpdesk reads: the contact with exactly this email, their company's plan (whose id Helpdesk routes and sets SLAs by), owner and deals."
+      },
+      "LeadRequest": {
+        "type": "object",
+        "required": [
+          "external_id"
+        ],
+        "additionalProperties": false,
+        "description": "Live Chat sends exactly its CrmLeadRequest: external_id, source live-chat, name, email, page, title, owner, referrer, utm, pages, transcript and chat_url. Forms and your own systems may send phone, company, value and message too.",
+        "properties": {
+          "external_id": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "The same id opens one lead, however often it is sent."
+          },
+          "source": {
+            "type": "string",
+            "examples": [
+              "live-chat",
+              "forms",
+              "api"
+            ]
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "company": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "The lead's deal name, up to 120 characters (the first line is kept)."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "owner": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [],
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "referrer": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "utm": {
+            "anyOf": [
+              {
+                "type": "object",
+                "required": [],
+                "properties": {
+                  "source": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "medium": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "campaign": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "pages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [],
+              "properties": {
+                "at": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "transcript": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [],
+              "properties": {
+                "from": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "at": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "chat_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "LeadCreated": {
+        "type": "object",
+        "required": [
+          "lead"
+        ],
+        "properties": {
+          "lead": {
+            "type": "object",
+            "required": [
+              "id",
+              "url",
+              "contact",
+              "created"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The deal's id."
+              },
+              "url": {
+                "type": "string"
+              },
+              "contact": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "created": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "ErasureRequest": {
+        "type": "object",
+        "required": [
+          "reference",
+          "product",
+          "people"
+        ],
+        "properties": {
+          "reference": {
+            "type": "string"
+          },
+          "product": {
+            "const": "audience"
+          },
+          "people": {
+            "type": "object",
+            "required": [
+              "emails",
+              "phones",
+              "userIds"
+            ],
+            "properties": {
+              "emails": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "phones": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "userIds": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ErasureAnswer": {
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "done",
+              "waiting"
+            ]
+          },
+          "deleted": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

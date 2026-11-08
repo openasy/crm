@@ -1,0 +1,72 @@
+# CRM's settings. This file is the only place they are changed; a change is picked up within a minute, and a file
+# with a mistake leaves the last good one in place. Companies, contacts and deals are worked in the UI.
+currency: TRY
+time_zone: Europe/Istanbul
+
+pipelines:
+  sales:
+    name: Sales
+    stages: # a deal counts toward the forecast at its value times its stage's probability
+      - { id: lead, name: Lead, probability: 10%, stale_after: 14d }
+      - { id: demo, name: Demo, probability: 25%, stale_after: 10d }
+      - { id: proposal, name: Proposal, probability: 50%, stale_after: 10d }
+      - { id: negotiation, name: Negotiation, probability: 75%, stale_after: 7d }
+    lost_reasons: [Chose a cheaper tool, Not this year, Needed payroll too, Stopped answering]
+
+# The plans companies are on. Helpdesk routes tickets and sets SLAs by the plan's id.
+plans:
+  free: Free
+  pro: Pro
+  business: Business
+
+leads:
+  stage: lead # where leads from Live Chat, forms and the API start
+  # owner: emily@example.com   # who owns a lead whose sender names no member
+
+quotes:
+  vat: 20% # KDV, shown separately on the PDF
+  valid_for: 30d
+  language: tr # the PDF's language: tr, en or de
+  seller:
+    name: Acme Yazılım A.Ş.
+    address: Büyükdere Cad. 1, 34394 Şişli, İstanbul
+    tax_office: Zincirlikuyu
+    tax_number: "1234567890"
+    email: sales@example.com
+  terms: Ödeme fatura tarihinden itibaren 30 gün içinde yapılır.
+
+tasks:
+  remind_at: "08:00" # reminders go out by email the morning a task is due
+
+
+# mail: # for task reminders and quotes sent by email
+#   host: smtp.example.com
+#   port: 587
+#   security: starttls
+#   user: crm@example.com
+#   password: CRM_MAIL_PASSWORD # the variable that holds it
+#   from: Acme Sales <sales@example.com>
+
+# Calendars people connect for their meeting links. Register CRM with the provider; the redirect address is
+# <CRM_PUBLIC_URL>/api/v1/calendar/callback.
+# calendars:
+#   google: { client_id: CRM_GOOGLE_CLIENT_ID, client_secret: CRM_GOOGLE_CLIENT_SECRET }
+#   microsoft: { client_id: CRM_MICROSOFT_CLIENT_ID, client_secret: CRM_MICROSOFT_CLIENT_SECRET, tenant: common }
+
+# meeting_links:
+#   demo:
+#     name: Acme demo
+#     owner: emily@example.com # whose calendar is read and written
+#     length: 30m
+#     hours: weekdays 09:00-12:00, weekdays 13:00-17:00
+#     buffer: 10m
+#     notice: 4h
+#     days_ahead: 14
+#     creates_deal_in: demo
+
+# audience: { url: http://audience:8080, token: CRM_AUDIENCE_TOKEN } # contacts and deal events, and the profile on a deal
+# messages:
+#   url: http://messages:8080
+#   token: CRM_MESSAGES_TOKEN
+#   sequences:
+#     follow-up: { name: Demo follow-up, event: crm_demo_follow_up } # a Messages journey started by this event

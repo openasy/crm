@@ -1,0 +1,44 @@
+# CRM. Pipelines, quotes, meeting links and the links to Audience and Messages are in crm.yaml; deals are worked in
+# the UI.
+#
+#   openssl rand -hex 32 > openasy-kek   # the product's key: sign-in secrets and calendar tokens (ADR 0021). Keep it with your backups
+#   docker compose up -d
+#   docker compose logs crm | grep 'no owner yet'   # the one-time link that creates the owner account
+services:
+  crm:
+    image: ghcr.io/openasy/crm:0.1.0
+    restart: unless-stopped
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs: [/tmp]
+    ports:
+      - "127.0.0.1:8080:8080" # UI, API and the booking pages; put a TLS proxy in front
+    volumes:
+      - crm-data:/data # SQLite database: companies, contacts, deals, quotes and bookings
+      - ./config:/config:ro # crm.yaml; mount the folder so an editor's save reaches it
+    secrets:
+      - openasy-kek # mounted at /run/secrets/openasy-kek
+    environment:
+      # The address people open CRM at; booking links, the calendars' OAuth redirect and links sent to other products use it.
+      CRM_PUBLIC_URL: ${CRM_PUBLIC_URL:-http://localhost:8080}
+      CRM_CONFIG: /config/crm.yaml
+      # The secrets crm.yaml names, never written in the file itself:
+      # CRM_MAIL_PASSWORD: ${CRM_MAIL_PASSWORD}
+      # CRM_GOOGLE_CLIENT_ID: ${CRM_GOOGLE_CLIENT_ID}
+      # CRM_GOOGLE_CLIENT_SECRET: ${CRM_GOOGLE_CLIENT_SECRET}
+      # CRM_MICROSOFT_CLIENT_ID: ${CRM_MICROSOFT_CLIENT_ID}
+      # CRM_MICROSOFT_CLIENT_SECRET: ${CRM_MICROSOFT_CLIENT_SECRET}
+      # CRM_AUDIENCE_TOKEN: ${CRM_AUDIENCE_TOKEN}   # an Audience token of the editor role (viewer is enough for the profile only)
+      # CRM_MESSAGES_TOKEN: ${CRM_MESSAGES_TOKEN}   # a Messages token of the editor role
+      # Sign in with your identity provider (OIDC), see the README:
+      # OPENASY_OIDC_ISSUER: https://login.example.com
+      # OPENASY_OIDC_CLIENT_ID: crm
+      # OPENASY_OIDC_CLIENT_SECRET: ${OPENASY_OIDC_CLIENT_SECRET}
+
+volumes:
+  crm-data:
+
+secrets:
+  openasy-kek:
+    file: ./openasy-kek
