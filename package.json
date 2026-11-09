@@ -1,6 +1,6 @@
 {
   "name": "@openasy/crm",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "OpenAsy CRM: companies, contacts and deals through pipelines set in a file, with tasks, activities, quotes as PDF and a meeting link people book from.",
   "license": "AGPL-3.0-only",

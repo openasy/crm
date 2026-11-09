@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "OpenAsy CRM",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Companies, contacts and deals through the pipelines crm.yaml sets, with activities, tasks, quotes as PDF and meeting links. Viewers read everything; editors change what they own; admins change everything.",
     "license": {
       "name": "AGPL-3.0-only",
