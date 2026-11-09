@@ -3,6 +3,7 @@ import { useAuth } from "@openasy/auth/react";
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { api, MfaSetupRequired, Unauthorized } from "./api.ts";
 import type { T } from "./i18n.ts";
+import { viewerLocale } from "./i18n.ts";
 
 /** Data loading with the session; when it ends, the sign-in screen comes back. */
 export function useApi() {
@@ -63,17 +64,18 @@ export function Code({ children, label }: { children: ReactNode; label?: string 
 // ---------------------------------------------------------------- formatting
 
 /** 45000 is "45,000 TL" in English and "45.000 TL" in Turkish; TRY is written TL, as people write it. */
-export function money(n: number, currency = "TRY", locale?: string) {
+export function money(n: number, currency = "TRY", locale: string = viewerLocale()) {
   const v = new Intl.NumberFormat(locale, { maximumFractionDigits: Number.isInteger(n) ? 0 : 2, minimumFractionDigits: Number.isInteger(n) ? 0 : 2 }).format(n);
   return `${v} ${currency === "TRY" ? "TL" : currency}`;
 }
 
-export const day = (d: string, locale?: string) => new Date(`${d}T12:00:00Z`).toLocaleDateString(locale, { day: "numeric", month: "short", timeZone: "UTC" });
-export const monthName = (m: string, locale?: string, long = false) =>
+export const day = (d: string, locale: string = viewerLocale()) =>
+  new Date(`${d}T12:00:00Z`).toLocaleDateString(locale, { day: "numeric", month: "short", timeZone: "UTC" });
+export const monthName = (m: string, locale: string = viewerLocale(), long = false) =>
   new Date(`${m}-15T12:00:00Z`).toLocaleDateString(locale, { month: long ? "long" : "short", timeZone: "UTC" });
-export const when = (iso: string, locale?: string) =>
+export const when = (iso: string, locale: string = viewerLocale()) =>
   new Date(iso).toLocaleString(locale, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-export const time = (iso: string, locale?: string, timeZone?: string) =>
+export const time = (iso: string, locale: string = viewerLocale(), timeZone?: string) =>
   new Date(iso).toLocaleString(locale, { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone });
 
 /** Today as YYYY-MM-DD in the browser's zone. */

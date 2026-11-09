@@ -128,7 +128,7 @@ export function NewDealDialog({
 function DealCard({ d, t, locale }: { d: Deal; t: T; locale: string }) {
   return (
     <li>
-      <a href={`/deals/${d.id}`} className="crm-card flex w-full flex-col gap-1 rounded-md border border-line bg-surface p-2.5 text-left no-underline">
+      <a href={`/deals/${d.id}`} className="crm-card flex w-full flex-col gap-1 rounded-md border border-line bg-surface p-2.5 text-start no-underline">
         <span className="truncate text-sm font-medium text-fg">{d.company?.name ?? d.name}</span>
         {d.company && <span className="truncate text-xs text-fg-muted">{d.name}</span>}
         <span className="flex items-center justify-between gap-2">
@@ -464,24 +464,24 @@ function QuoteDialog({
       }
     >
       {error && <Notice tone="danger">{error}</Notice>}
-      <table className="crm-lines w-full text-left text-sm">
+      <table className="crm-lines w-full text-start text-sm">
         <caption className="sr-only">{t("quote.lines")}</caption>
         <thead className="text-xs text-fg-muted">
           <tr>
-            <th className="py-1 pr-2 font-semibold">{t("quote.item")}</th>
-            <th className="w-16 py-1 pr-2 font-semibold">{t("quote.qty")}</th>
-            <th className="w-28 py-1 pr-2 font-semibold">{t("quote.price")}</th>
-            <th className="w-16 py-1 pr-2 font-semibold">{t("quote.discount")}</th>
+            <th className="py-1 pe-2 font-semibold">{t("quote.item")}</th>
+            <th className="w-16 py-1 pe-2 font-semibold">{t("quote.qty")}</th>
+            <th className="w-28 py-1 pe-2 font-semibold">{t("quote.price")}</th>
+            <th className="w-16 py-1 pe-2 font-semibold">{t("quote.discount")}</th>
             <th className="w-8" />
           </tr>
         </thead>
         <tbody>
           {lines.map((l, i) => (
             <tr key={i}>
-              <td className="py-1 pr-2">
+              <td className="py-1 pe-2">
                 <TextField label={t("quote.itemN", { n: i + 1 })} className="sr-label" value={l.item} onChange={(e) => setLine(i, "item", e.target.value)} />
               </td>
-              <td className="py-1 pr-2">
+              <td className="py-1 pe-2">
                 <TextField
                   label={t("quote.qtyN", { n: i + 1 })}
                   value={l.quantity}
@@ -489,7 +489,7 @@ function QuoteDialog({
                   onChange={(e) => setLine(i, "quantity", e.target.value)}
                 />
               </td>
-              <td className="py-1 pr-2">
+              <td className="py-1 pe-2">
                 <TextField
                   label={t("quote.priceN", { n: i + 1 })}
                   value={l.unitPrice}
@@ -497,7 +497,7 @@ function QuoteDialog({
                   onChange={(e) => setLine(i, "unitPrice", e.target.value)}
                 />
               </td>
-              <td className="py-1 pr-2">
+              <td className="py-1 pe-2">
                 <TextField
                   label={t("quote.discountN", { n: i + 1 })}
                   value={l.discount}
@@ -584,14 +584,14 @@ function QuotePanel({
       )}
       {q && (
         <>
-          <table className="w-full text-left text-sm">
+          <table className="w-full text-start text-sm">
             <caption className="sr-only">{t("quote.lines")}</caption>
             <thead className="bg-canvas text-xs text-fg-muted">
               <tr>
                 <th className="px-3 py-1.5 font-semibold">{t("quote.item")}</th>
-                <th className="px-3 py-1.5 text-right font-semibold">{t("quote.qty")}</th>
-                <th className="px-3 py-1.5 text-right font-semibold">{t("quote.price")}</th>
-                <th className="px-3 py-1.5 text-right font-semibold">{t("quote.total")}</th>
+                <th className="px-3 py-1.5 text-end font-semibold">{t("quote.qty")}</th>
+                <th className="px-3 py-1.5 text-end font-semibold">{t("quote.price")}</th>
+                <th className="px-3 py-1.5 text-end font-semibold">{t("quote.total")}</th>
               </tr>
             </thead>
             <tbody>
@@ -601,28 +601,28 @@ function QuotePanel({
                     {l.item}
                     {l.discount > 0 && <span className="text-2xs text-fg-muted"> · {t("quote.less", { n: l.discount })}</span>}
                   </td>
-                  <td className="px-3 py-1.5 text-right font-mono text-xs">{l.quantity}</td>
-                  <td className="px-3 py-1.5 text-right font-mono text-xs">{tl(l.unitPrice)}</td>
-                  <td className="px-3 py-1.5 text-right font-mono text-xs">{tl(l.total)}</td>
+                  <td className="px-3 py-1.5 text-end font-mono text-xs">{l.quantity}</td>
+                  <td className="px-3 py-1.5 text-end font-mono text-xs">{tl(l.unitPrice)}</td>
+                  <td className="px-3 py-1.5 text-end font-mono text-xs">{tl(l.total)}</td>
                 </tr>
               ))}
               <tr className="border-t border-line font-semibold">
                 <td className="px-3 py-1.5" colSpan={3}>
                   {t("quote.subtotal")}
                 </td>
-                <td className="px-3 py-1.5 text-right font-mono text-xs">{tl(q.subtotal)}</td>
+                <td className="px-3 py-1.5 text-end font-mono text-xs">{tl(q.subtotal)}</td>
               </tr>
               <tr className="border-t border-line text-fg-muted">
                 <td className="px-3 py-1.5" colSpan={3}>
                   {t("quote.vat", { n: q.vat })}
                 </td>
-                <td className="px-3 py-1.5 text-right font-mono text-xs">{tl(q.vatAmount)}</td>
+                <td className="px-3 py-1.5 text-end font-mono text-xs">{tl(q.vatAmount)}</td>
               </tr>
               <tr className="border-t border-line">
                 <td className="px-3 py-1.5" colSpan={3}>
                   {t("quote.withVat")}
                 </td>
-                <td className="px-3 py-1.5 text-right font-mono text-xs">{tl(q.total)}</td>
+                <td className="px-3 py-1.5 text-end font-mono text-xs">{tl(q.total)}</td>
               </tr>
             </tbody>
           </table>
@@ -793,13 +793,13 @@ export function DealPage(ctx: Ctx & { id: string }) {
             <li
               key={x.id}
               aria-current={current ? "step" : undefined}
-              className={cn("flex grow border-r border-line text-xs last:border-r-0", reached ? "bg-accent-soft text-accent-text" : "bg-surface text-fg-muted")}
+              className={cn("flex grow border-e border-line text-xs last:border-e-0", reached ? "bg-accent-soft text-accent-text" : "bg-surface text-fg-muted")}
             >
               <button
                 type="button"
                 disabled={!deal.canEdit || deal.status !== "open" || current}
                 onClick={() => move(x.id)}
-                className="flex w-full flex-col px-3 py-1.5 text-left disabled:cursor-default"
+                className="flex w-full flex-col px-3 py-1.5 text-start disabled:cursor-default"
                 title={deal.canEdit && deal.status === "open" && !current ? t("deal.moveTo", { stage: x.name }) : undefined}
               >
                 <span className="font-medium">{x.name}</span>

@@ -44,7 +44,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Company, Contact, Deal, Member, ProductLink, Report, Settings, Summary } from "./api.ts";
 import { money, monthName, useApi, useLoad, type Call } from "./common.tsx";
 import { DealPage, PipelinePage } from "./deals.tsx";
-import { useT } from "./i18n.ts";
+import { useT, setViewerLocale } from "./i18n.ts";
 import { IntegrationsPage, MeetingsPage, SettingsFilePage, TasksPage } from "./pages.tsx";
 import { CompaniesPage, CompanyPage, ContactPage } from "./records.tsx";
 
@@ -74,6 +74,7 @@ export interface Ctx {
 function OverviewPage({ call, settings }: Ctx) {
   const t = useT();
   const [locale] = useLocalePreference();
+  setViewerLocale(locale);
   const c = settings.config;
   const [pipeline, setPipeline] = useState(c.pipelines[0]!.id);
   const [r] = useLoad<Report>(call, `/api/v1/report?pipeline=${encodeURIComponent(pipeline)}`);
